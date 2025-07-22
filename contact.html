@@ -252,6 +252,43 @@
                       </div>
                     </div>
 
+<!-- Niche Area Dropdown -->
+<div class="col-lg-6 mb-30">
+  <label for="niche" class="upload-label">Select Your Niche Area:</label>
+  <div class="input-icon-wrapper">
+    <i class="fas fa-tags"></i>
+    <select
+      id="niche"
+      name="niche"
+      class="form-control select-with-icon"
+      onchange="toggleOtherInput(this)"
+    >
+      <option value="">-- Choose Your Niche --</option>
+      <option value="Fashion">Fashion</option>
+      <option value="Travel">Travel</option>
+      <option value="Food">Food</option>
+      <option value="Fitness">Fitness</option>
+      <option value="Tech">Tech</option>
+      <option value="Other">Other</option>
+    </select>
+  </div>
+</div>
+
+<!-- Other Input Field -->
+<div class="col-lg-6 mb-30">
+  <label for="other-niche" class="upload-label">If Other, Specify:</label>
+  <div class="input-icon-wrapper">
+    <i class="fas fa-pen"></i>
+    <input
+      id="other-niche"
+      name="other_niche"
+      placeholder="Specify your niche"
+      type="text"
+      disabled
+      class="form-control input-with-icon"
+    />
+  </div>
+</div>
                     <!-- Description -->
                     <div class="col-lg-12 mb-30">
                       <div class="contact-message c-icon">
@@ -450,6 +487,21 @@
     <!-- footer-end -->
 
     <!-- JS here -->
+     <script>
+  function toggleOtherInput(selectElement) {
+    const otherInput = document.getElementById("other-niche");
+    if (selectElement.value === "Other") {
+      otherInput.disabled = false;
+      otherInput.style.backgroundColor = "";
+      otherInput.style.cursor = "";
+    } else {
+      otherInput.disabled = true;
+      otherInput.value = "";
+      otherInput.style.backgroundColor = "#f5f5f5";
+      otherInput.style.cursor = "not-allowed";
+    }
+  }
+</script>
     <script src="js/vendor/modernizr-3.5.0.min.js"></script>
     <script src="js/vendor/jquery-1.12.4.min.js"></script>
     <script src="js/popper.min.js"></script>
