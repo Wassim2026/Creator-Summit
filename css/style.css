@@ -6124,3 +6124,180 @@ pre cite {
   position: relative;
   z-index: 2;
 }
+
+
+.themeborder {
+  border: 1px solid #ddd;
+  margin-bottom: 20px;
+  padding: 15px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.session_content_wrapper {
+  display: flex;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.session_content_wrapper.expandable {
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
+
+.session_content_wrapper.expandable:hover {
+  background-color: #f0f0f0;
+}
+
+.session_speaker_thumb img {
+  width: 75px;
+  height: 75px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #ccc;
+}
+
+.session_speaker_icon {
+  font-size: 40px;
+  color: #999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 75px;
+  height: 75px;
+  background: #eee;
+  border-radius: 50%;
+}
+
+.session_content {
+  flex: 1;
+  min-width: 220px;
+}
+
+.session_start_time {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 4px;
+}
+
+.session_speakers {
+  font-size: 14px;
+  color: #444;
+}
+
+.session_excerpt {
+  margin-top: 10px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #555;
+}
+
+/* TAG STYLES */
+.session_title_list {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+  font-size: 13px;
+  color: #777;
+}
+
+.session_title_item {
+  background: #f2f2f2;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  color: #555;
+}
+
+/* LOCATION SECTION */
+.session_location {
+  margin-top: 10px;
+  padding: 10px;
+  background: #f9f9f9;
+  border-left: 4px solid #007bff;
+}
+
+.session_location_label {
+  font-weight: bold;
+  color: #007bff;
+  margin-bottom: 5px;
+}
+
+.session_location_content {
+  font-size: 14px;
+  color: #333;
+}
+
+/* HIDE/SHOW STYLES */
+.hide {
+  display: none;
+}
+
+.schedule-days-row {
+  display: flex;
+  gap: 30px;
+  margin-bottom: 40px;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.schedule-day {
+  flex: 1 1 calc(50% - 15px);
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  background-color: #fff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
+
+.schedule-day-heading {
+  background-color: #f7f7f7;
+  color: #ff007a;
+  padding: 12px 20px;
+  font-weight: 600;
+  font-size: 18px;
+  border-bottom: 1px solid #eee;
+}
+
+.session_content_wrapper {
+  display: flex;
+  align-items: center;
+  padding: 15px 20px;
+  border-bottom: 1px solid #eee;
+  transition: background 0.3s ease;
+}
+
+.session_content_wrapper:hover {
+  background: #f9f9f9;
+}
+
+.session_speaker_thumb img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 15px;
+}
+
+.session_content {
+  display: flex;
+  flex-direction: column;
+}
+
+.session_title h6 {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 5px 0;
+}
+
+.session_start_time,
+.session_speakers {
+  font-size: 14px;
+  color: #555;
+}
