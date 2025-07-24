@@ -131,13 +131,16 @@
                     >
                       DUBAI CREATORS SUMMIT 2025
                     </h2>
-                    <h4
+                    <h4 class="dubai-creator-subtitle">
+                      Where Creators Meet <span id="flipping-text">Brands and Business</span>
+                    </h4>
+                    <!-- <h4
                       class="dubai-creator-subtitle"
                       data-animation="fadeInUp animated"
                       data-delay=".4s"
                     >
                       "Where Creators Meet Brands and Business"
-                    </h4>
+                    </h4>  -->
                     <!-- <ul data-animation="fadeInUp animated" data-delay=".2s">
 											<li><i class="fas fa-map-marker-alt"></i> Waterfront Hotel, London</li>
 											<li><i class="far fa-clock"></i>  5 - 7 June 2019, </li>
@@ -1456,6 +1459,23 @@
     <!-- footer-end -->
 
     <!-- JS here -->
+    <script>
+      const words = [ "Growth","Brands","Business", "Opportunities", "Partnerships",];
+      let index = 0;
+      const flipElement = document.getElementById("flipping-text");
+        
+      function flipWords() {
+        // Trigger animation reset
+        flipElement.classList.remove("flip");
+        void flipElement.offsetWidth; // Reflow trick
+        flipElement.textContent = words[index];
+        flipElement.classList.add("flip");
+        index = (index + 1) % words.length;
+      }
+    
+      flipWords();
+      setInterval(flipWords, 2500);
+    </script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="js/plugins/jquery.countdown.js"></script>
     <script src="js/vendor/modernizr-3.5.0.min.js"></script>
