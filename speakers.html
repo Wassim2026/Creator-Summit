@@ -28,6 +28,71 @@
     <link rel="stylesheet" href="css/style.css" />
     <link rel="stylesheet" href="css/responsive.css" />
   </head>
+  <script>
+  function openSpeakerModal(name, role, description, image) {
+    const modalContent = `
+      <div class="row align-items-center">
+        <div class="col-md-4 text-center">
+          <img src="${image}" alt="${name}" class="img-fluid rounded-circle mb-3" style="width: 150px; height: 150px; object-fit: cover;" />
+        </div>
+        <div class="col-md-8">
+          <h4 style="color:#002b7f;">${name}</h4>
+          <p style="color: #777;"><strong>${role}</strong></p>
+          <p>${description || 'No description available.'}</p>
+        </div>
+      </div>
+    `;
+    document.getElementById('modalContent').innerHTML = modalContent;
+    var myModal = new bootstrap.Modal(document.getElementById('speakerModal'));
+    myModal.show();
+  }
+</script>
+
+<!-- JS RENDERING SPEAKERS -->
+<script>
+    fetch('/api/speakers')
+      .then((res) => res.json())
+      .then((data) => {
+        const container = document.getElementById('speakers-container');
+        data.forEach((speaker) => {
+         const imageUrl = speaker.youtube_image && speaker.youtube_image.startsWith('/uploads/')
+  ? speaker.youtube_image
+  : speaker.youtube_image
+    ? `/uploads/${speaker.youtube_image}`
+    : 'img/speaker_1.png';
+
+
+          const html = `
+            <div class="col-lg-3 col-md-6 mb-4">
+              <div class="card text-center p-4 border-0 shadow-sm">
+                <div class="mb-3">
+                  <img 
+  src="${imageUrl}" 
+  alt="${speaker.name}" 
+  onclick="openSpeakerModal('${speaker.name}', '${speaker.role || ''}', '${speaker.description || ''}', '${imageUrl}')"
+  style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; background: #eee; cursor: pointer;"
+/>
+
+                </div>
+                <h5 style="font-weight: 700; color: #002b7f;">${speaker.name}</h5>
+                <p style="color: #777; margin-top: 5px;">${speaker.niche || 'Speaker'}</p>
+               <div class="d-flex justify-content-center gap-2 mt-3">
+  ${speaker.instagram ? `<a href="${speaker.instagram}" target="_blank" class="social-icon mx-1"><i class="fab fa-instagram"></i></a>` : ''}
+  ${speaker.youtube ? `<a href="${speaker.youtube}" target="_blank" class="social-icon mx-1"><i class="fab fa-youtube"></i></a>` : ''}
+  ${speaker.tiktok ? `<a href="${speaker.tiktok}" target="_blank" class="social-icon mx-1"><i class="fab fa-tiktok"></i></a>` : ''}
+
+</div>
+
+              </div>
+            </div>
+          `;
+          container.innerHTML += html;
+        });
+      })
+      .catch((err) => {
+        console.error('Failed to load speakers:', err);
+      });
+  </script>
   <body>
     <!-- header -->
     <header
@@ -169,191 +234,17 @@
               </div>
             </div>
           </div>
+          <div class="row" id="speakers-container"></div>
           <div class="row">
             <div
               class="col-lg-3 col-md-6 wow fadeInDown animated"
               data-animation="fadeInUp animated"
               data-delay=".2s"
             >
-              <div class="single-team text-center pt-50 pb-50 mb-30">
                 <div class="team-thumb">
                   <img src="img/speaker_1.png" alt="img" />
                 </div>
                 <div class="team-info">
-                  <h5>James D. Franklin</h5>
-                  <!-- <p>Founder & CEO</p>
-                  <strong>Fire Epic Ltd.</strong> -->
-                  <div class="team-social pt-15 pb-15 mb-15">
-                    <a href="#"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#"><i class="fab fa-twitter"></i></a>
-                    <a href="#"><i class="fab fa-instagram"></i></a>
-                    <a href="#"><i class="fab fa-dribbble"></i></a>
-                  </div>
-                  <span>Content Writer</span>
-                </div>
-              </div>
-            </div>
-            <div
-              class="col-lg-3 col-md-6 wow fadeInDown animated"
-              data-animation="fadeInUp animated"
-              data-delay=".2s"
-            >
-              <div class="single-team text-center pt-50 pb-50 mb-30">
-                <div class="team-thumb">
-                  <img src="img/speaker_2.png" alt="img" />
-                </div>
-                <div class="team-info">
-                  <h5>Natosha W. Green</h5>
-                  <!-- <p>Founder & CEO</p>
-                  <strong>Fire Epic Ltd.</strong> -->
-                  <div class="team-social pt-15 pb-15 mb-15">
-                    <a href="#"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#"><i class="fab fa-twitter"></i></a>
-                    <a href="#"><i class="fab fa-instagram"></i></a>
-                    <a href="#"><i class="fab fa-dribbble"></i></a>
-                  </div>
-                  <span>Content Writer</span>
-                </div>
-              </div>
-            </div>
-            <div
-              class="col-lg-3 col-md-6 wow fadeInDown animated"
-              data-animation="fadeInUp animated"
-              data-delay=".2s"
-            >
-              <div class="single-team text-center pt-50 pb-50 mb-30">
-                <div class="team-thumb">
-                  <img src="img/speaker_3.png" alt="img" />
-                </div>
-                <div class="team-info">
-                  <h5>Brian J. Swanson</h5>
-                  <!-- <p>Founder & CEO</p>
-                  <strong>Fire Epic Ltd.</strong> -->
-                  <div class="team-social pt-15 pb-15 mb-15">
-                    <a href="#"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#"><i class="fab fa-twitter"></i></a>
-                    <a href="#"><i class="fab fa-instagram"></i></a>
-                    <a href="#"><i class="fab fa-dribbble"></i></a>
-                  </div>
-                  <span>Content Writer</span>
-                </div>
-              </div>
-            </div>
-            <div
-              class="col-lg-3 col-md-6 wow fadeInDown animated"
-              data-animation="fadeInUp animated"
-              data-delay=".2s"
-            >
-              <div class="single-team text-center pt-50 pb-50 mb-30">
-                <div class="team-thumb">
-                  <img src="img/speaker_4.png" alt="img" />
-                </div>
-                <div class="team-info">
-                  <h5>Stephanie D. Gray</h5>
-                  <!-- <p>Founder & CEO</p>
-                  <strong>Fire Epic Ltd.</strong> -->
-                  <div class="team-social pt-15 pb-15 mb-15">
-                    <a href="#"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#"><i class="fab fa-twitter"></i></a>
-                    <a href="#"><i class="fab fa-instagram"></i></a>
-                    <a href="#"><i class="fab fa-dribbble"></i></a>
-                  </div>
-                  <span>Content Writer</span>
-                </div>
-              </div>
-            </div>
-            <div
-              class="col-lg-3 col-md-6 wow fadeInDown animated"
-              data-animation="fadeInUp animated"
-              data-delay=".2s"
-            >
-              <div class="single-team text-center pt-50 pb-50 mb-30">
-                <div class="team-thumb">
-                  <img src="img/speaker_5.png" alt="img" />
-                </div>
-                <div class="team-info">
-                  <h5>James D. Franklin</h5>
-                  <!-- <p>Founder & CEO</p>
-                  <strong>Fire Epic Ltd.</strong> -->
-                  <div class="team-social pt-15 pb-15 mb-15">
-                    <a href="#"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#"><i class="fab fa-twitter"></i></a>
-                    <a href="#"><i class="fab fa-instagram"></i></a>
-                    <a href="#"><i class="fab fa-dribbble"></i></a>
-                  </div>
-                  <span>Content Writer</span>
-                </div>
-              </div>
-            </div>
-            <div
-              class="col-lg-3 col-md-6 wow fadeInDown animated"
-              data-animation="fadeInUp animated"
-              data-delay=".2s"
-            >
-              <div class="single-team text-center pt-50 pb-50 mb-30">
-                <div class="team-thumb">
-                  <img src="img/speaker_6.png" alt="img" />
-                </div>
-                <div class="team-info">
-                  <h5>Natosha W. Green</h5>
-                  <!-- <p>Founder & CEO</p>
-                  <strong>Fire Epic Ltd.</strong> -->
-                  <div class="team-social pt-15 pb-15 mb-15">
-                    <a href="#"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#"><i class="fab fa-twitter"></i></a>
-                    <a href="#"><i class="fab fa-instagram"></i></a>
-                    <a href="#"><i class="fab fa-dribbble"></i></a>
-                  </div>
-                  <span>Content Writer</span>
-                </div>
-              </div>
-            </div>
-            <div
-              class="col-lg-3 col-md-6 wow fadeInDown animated"
-              data-animation="fadeInUp animated"
-              data-delay=".2s"
-            >
-              <div class="single-team text-center pt-50 pb-50 mb-30">
-                <div class="team-thumb">
-                  <img src="img/speaker_7.png" alt="img" />
-                </div>
-                <div class="team-info">
-                  <h5>Brian J. Swanson</h5>
-                  <!-- <p>Founder & CEO</p>
-                  <strong>Fire Epic Ltd.</strong> -->
-                  <div class="team-social pt-15 pb-15 mb-15">
-                    <a href="#"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#"><i class="fab fa-twitter"></i></a>
-                    <a href="#"><i class="fab fa-instagram"></i></a>
-                    <a href="#"><i class="fab fa-dribbble"></i></a>
-                  </div>
-                  <span>Content Writer</span>
-                </div>
-              </div>
-            </div>
-            <div
-              class="col-lg-3 col-md-6 wow fadeInDown animated"
-              data-animation="fadeInUp animated"
-              data-delay=".2s"
-            >
-              <div class="single-team text-center pt-50 pb-50 mb-30">
-                <div class="team-thumb">
-                  <img src="img/speaker_8.png" alt="img" />
-                </div>
-                <div class="team-info">
-                  <h5>Stephanie D. Gray</h5>
-                  <!-- <p>Founder & CEO</p>
-                  <strong>Fire Epic Ltd.</strong> -->
-                  <div class="team-social pt-15 pb-15 mb-15">
-                    <a href="#"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#"><i class="fab fa-twitter"></i></a>
-                    <a href="#"><i class="fab fa-instagram"></i></a>
-                    <a href="#"><i class="fab fa-dribbble"></i></a>
-                  </div>
-                  <span>Content Writer</span>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </section>
@@ -629,4 +520,19 @@
     <script src="js/imagesloaded.pkgd.min.js"></script>
     <script src="js/main.js"></script>
   </body>
+
+   <!-- Modal -->
+<div class="modal fade" id="speakerModal" tabindex="-1" aria-labelledby="speakerModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="speakerModalLabel">Speaker Detail</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" id="modalContent">
+        <!-- Content inserted dynamically -->
+      </div>
+    </div>
+  </div>
+</div>
 </html>

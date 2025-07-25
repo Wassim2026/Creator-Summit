@@ -133,7 +133,7 @@
   </div>
 </section>
       <!-- contact-area start -->
-      <section id="contact" class="pt-50 pb-50">
+      <section id="contact" class="pt-120 pb-120">
         <div class="container">
           <div class="row justify-content-center">
             <div class="col-xl-8 col-lg-10">
@@ -146,11 +146,8 @@
           <div class="row">
             <div class="col-xl-12">
               <div class="contact-wrapper">
-                <form
-                  action="#"
-                  id="contact-form"
-                  enctype="multipart/form-data"
-                >
+                <form action="http://localhost:3000/submit-angel" method="POST" enctype="multipart/form-data">
+
                   <div class="row">
                     <!-- Name -->
                     <div class="col-lg-6 mb-30">
@@ -262,44 +259,28 @@
                     </div>
 
                     <!-- Niche Area Dropdown -->
-                    <div class="col-lg-6 mb-30">
-                      <label for="niche" class="upload-label">Select Your Niche Area:</label>
-                      <div class="input-icon-wrapper">
-                        <i class="fas fa-tags"></i>
-                        <select
-                          id="niche"
-                          name="niche"
-                          class="form-control select-with-icon"
-                          onchange="toggleOtherInput(this)"
-                          required
-                        >
-                          <option value="">-- Choose Your Niche --</option>
-                          <option value="Fashion">Fashion</option>
-                          <option value="Travel">Travel</option>
-                          <option value="Food">Food</option>
-                          <option value="Fitness">Fitness</option>
-                          <option value="Tech">Tech</option>
-                          <option value="Other">Other</option>
-                        </select>
-                      </div>
-                    </div>
+                   <div class="col-lg-6 mb-30">
+  <label for="niche" class="upload-label">Select or Type Your Niche Area:</label>
+  <div class="input-icon-wrapper">
+    <i class="fas fa-tags"></i>
+    <input
+      id="niche"
+      name="niche"
+      class="form-control input-with-icon"
+      list="niche-options"
+      placeholder="Start typing or choose..."
+      required
+    />
+    <datalist id="niche-options">
+      <option value="Fashion">
+      <option value="Travel">
+      <option value="Food">
+      <option value="Fitness">
+      <option value="Tech">
+    </datalist>
+  </div>
+</div>
 
-                    <!-- Other Input Field -->
-                    <div class="col-lg-6 mb-30">
-                      <label for="other-niche" class="upload-label">If Other, Specify:</label>
-                      <div class="input-icon-wrapper">
-                        <i class="fas fa-pen"></i>
-                        <input
-                          id="other-niche"
-                          name="other_niche"
-                          placeholder="Specify your niche"
-                          type="text"
-                          disabled
-                          class="form-control input-with-icon"
-                          required
-                        />
-                      </div>
-                    </div>
                     <!-- Description -->
                     <div class="col-lg-12 mb-30">
                       <div class="contact-message c-icon">

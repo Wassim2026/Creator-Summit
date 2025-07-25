@@ -97,6 +97,58 @@
       </div>
     </header>
     <!-- header-end -->
+<script>
+  function initializeCountdown(clockId, targetDateStr) {
+    const countdownElement = document.getElementById(clockId);
+    const targetDate = new Date(targetDateStr + "T14:11:00"); // 2:11 PM
+
+    function updateCountdown() {
+      const now = new Date();
+      const diff = targetDate - now;
+
+      if (diff <= 0) {
+        countdownElement.innerHTML = "<b>Event Started!</b>";
+        return;
+      }
+
+      const weeks = Math.floor(diff / (1000 * 60 * 60 * 24 * 7));
+      const days = Math.floor((diff / (1000 * 60 * 60 * 24)) % 7);
+      const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+      const minutes = Math.floor((diff / (1000 * 60)) % 60);
+      const seconds = Math.floor((diff / 1000) % 60);
+
+      countdownElement.innerHTML = `
+        <div style="display: flex; justify-content: center; gap: 10px;">
+          <div style="background: #ff2a68; color: white; padding: 20px; font-size: 40px; text-align: center; border-radius: 8px;">
+            ${String(weeks).padStart(2, '0')}<div style="font-size: 14px;">weeks</div>
+          </div>
+          <div style="background: #ff2a68; color: white; padding: 20px; font-size: 40px; text-align: center; border-radius: 8px;">
+            ${String(days).padStart(2, '0')}<div style="font-size: 14px;">days</div>
+          </div>
+          <div style="background: #ff2a68; color: white; padding: 20px; font-size: 40px; text-align: center; border-radius: 8px;">
+            ${String(hours).padStart(2, '0')}<div style="font-size: 14px;">hours</div>
+          </div>
+          <div style="background: #ff2a68; color: white; padding: 20px; font-size: 40px; text-align: center; border-radius: 8px;">
+            ${String(minutes).padStart(2, '0')}<div style="font-size: 14px;">minutes</div>
+          </div>
+          <div style="background: #ff2a68; color: white; padding: 20px; font-size: 40px; text-align: center; border-radius: 8px;">
+            ${String(seconds).padStart(2, '0')}<div style="font-size: 14px;">seconds</div>
+          </div>
+        </div>
+      `;
+    }
+
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const clock = document.querySelector('[id^="clock"]');
+    const clockId = clock.id;
+    const targetDate = clock.dataset.date;
+    initializeCountdown(clockId, targetDate);
+  });
+</script>
 
     <!-- main-area -->
     <main>
@@ -272,21 +324,12 @@
                 start in
               </div>
               <div class="ppb_header_content">
-                <div id="clock1573568515278500141" data-date="2025-09-19"></div>
+                <!-- change date for the countdown -->
+                <div id="clock1573568515278500141" data-date="2025-07-30"></div> 
               </div>
             </div>
           </div>
-        </div>
-      </div>
-      <div class="standard_wrapper">
-        <div class="page_content_wrapper">
-          <div class="inner">
-            <div style="margin: auto; width: 100%">
-              <div class="ppb_header_content">
-                <div id="clock1573568515278500141" data-date="2025-09-12"></div>
-              </div>
-            </div>
-          </div>
+          <div id="clockdiv" data-date="2025-07-30"></div>
         </div>
       </div>
 
