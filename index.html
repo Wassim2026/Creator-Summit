@@ -333,7 +333,7 @@
         </div>
       </div>
 
-      <!-- team-area -->
+           <!-- team-area -->
       <section id="team" class="team-area p-relative pt-120 pb-120 fix">
         <div class="section-t team-t paroller"
           data-paroller-factor="0.15"
@@ -359,76 +359,11 @@
               </div>
             </div>
           </div>
-        
-          <!-- Four Speakers -->
-          <div class="row justify-content-center">
-            <!-- Speaker 1 -->
-            <div class="col-lg-3 col-md-6 col-sm-12 wow fadeInDown animated" data-animation="fadeInUp animated" data-delay=".2s">
-              <div class="single-team text-center pt-50 pb-50 mb-30">
-                <div class="team-thumb"><img src="img/speaker_1.png" alt="img" /></div>
-                <div class="team-info">
-                  <h5>James D. Franklin</h5>
-                  <div class="team-social pt-15 pb-15 mb-15">
-                    <a href="#"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#"><i class="fab fa-twitter"></i></a>
-                    <a href="#"><i class="fab fa-instagram"></i></a>
-                    <a href="#"><i class="fab fa-dribbble"></i></a>
-                  </div>
-                  <span>Content Writer</span>
-                </div>
-              </div>
-            </div>
-          
-            <!-- Speaker 2 -->
-            <div class="col-lg-3 col-md-6 col-sm-12 wow fadeInDown animated" data-animation="fadeInUp animated" data-delay=".2s">
-              <div class="single-team text-center pt-50 pb-50 mb-30">
-                <div class="team-thumb"><img src="img/speaker_2.png" alt="img" /></div>
-                <div class="team-info">
-                  <h5>Natosha W. Green</h5>
-                  <div class="team-social pt-15 pb-15 mb-15">
-                    <a href="#"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#"><i class="fab fa-twitter"></i></a>
-                    <a href="#"><i class="fab fa-instagram"></i></a>
-                    <a href="#"><i class="fab fa-dribbble"></i></a>
-                  </div>
-                  <span>Content Writer</span>
-                </div>
-              </div>
-            </div>
-          
-            <!-- Speaker 3 -->
-            <div class="col-lg-3 col-md-6 col-sm-12 wow fadeInDown animated" data-animation="fadeInUp animated" data-delay=".2s">
-              <div class="single-team text-center pt-50 pb-50 mb-30">
-                <div class="team-thumb"><img src="img/speaker_3.png" alt="img" /></div>
-                <div class="team-info">
-                  <h5>Brian J. Swanson</h5>
-                  <div class="team-social pt-15 pb-15 mb-15">
-                    <a href="#"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#"><i class="fab fa-twitter"></i></a>
-                    <a href="#"><i class="fab fa-instagram"></i></a>
-                    <a href="#"><i class="fab fa-dribbble"></i></a>
-                  </div>
-                  <span>Content Writer</span>
-                </div>
-              </div>
-            </div>
-          
-            <!-- Speaker 4 -->
-            <div class="col-lg-3 col-md-6 col-sm-12 wow fadeInDown animated" data-animation="fadeInUp animated" data-delay=".2s">
-              <div class="single-team text-center pt-50 pb-50 mb-30">
-                <div class="team-thumb"><img src="img/speaker_4.png" alt="img" /></div>
-                <div class="team-info">
-                  <h5>Stephanie D. Gray</h5>
-                  <div class="team-social pt-15 pb-15 mb-15">
-                    <a href="#"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#"><i class="fab fa-twitter"></i></a>
-                    <a href="#"><i class="fab fa-instagram"></i></a>
-                    <a href="#"><i class="fab fa-dribbble"></i></a>
-                  </div>
-                  <span>Content Writer</span>
-                </div>
-              </div>
-            </div>
+        <div class="row justify-content-center" id="speakers-container">
+  <!-- Dynamic speakers will be injected here -->
+</div>
+
+         
           </div>
         
           <!-- View More Button Centered -->
@@ -1521,6 +1456,110 @@
       flipWords();
       setInterval(flipWords, 2500);
     </script>
+
+     <script>
+  document.addEventListener('DOMContentLoaded', () => {
+    fetch('/api/speakers')
+      .then(res => res.json())
+      .then(data => {
+        const container = document.querySelector('.row.justify-content-center');
+        container.innerHTML = '';
+
+        // Shuffle and pick 4
+        const shuffled = data.sort(() => 0.5 - Math.random());
+        const selected = shuffled.slice(0, 4);
+
+        selected.forEach((speaker) => {
+          const imageUrl = speaker.youtube_image && speaker.youtube_image.startsWith('/uploads/')
+            ? speaker.youtube_image
+            : speaker.youtube_image
+              ? `/uploads/${speaker.youtube_image}`
+              : 'img/speaker_1.png';
+
+          const html = `
+            <div class="col-lg-3 col-md-6 col-sm-12 wow fadeInDown animated">
+              <div class="single-team text-center pt-50 pb-50 mb-30">
+                <div class="team-thumb">
+                  <img 
+                    src="${imageUrl}" 
+                    alt="${speaker.name}" 
+                    onclick="openSpeakerModal('${speaker.name}', '${speaker.role || ''}', '${speaker.description || ''}', '${imageUrl}')" 
+                    style="width: 100%; height: 250px; object-fit: cover; cursor: pointer;"
+                  />
+                </div>
+                <div class="team-info">
+                  <h5>${speaker.name}</h5>
+                  <div class="team-social pt-15 pb-15 mb-15">
+                    ${speaker.instagram ? `<a href="${speaker.instagram}" target="_blank"><i class="fab fa-instagram"></i></a>` : ''}
+                    ${speaker.youtube ? `<a href="${speaker.youtube}" target="_blank"><i class="fab fa-youtube"></i></a>` : ''}
+                    ${speaker.tiktok ? `<a href="${speaker.tiktok}" target="_blank"><i class="fab fa-tiktok"></i></a>` : ''}
+                  </div>
+                  <span>${speaker.niche || speaker.title || 'Speaker'}</span>
+                  <div class="mt-3">
+                    <button class="btn btn-sm btn-primary" onclick="openVoteModal('${speaker.name}')">Vote</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          `;
+          container.innerHTML += html;
+        });
+      })
+      .catch(error => {
+        console.error('Fetch error:', error);
+        alert('Unable to load speakers.');
+      });
+
+    // Hide modals initially
+    document.getElementById('voteModal').style.display = 'none';
+    document.getElementById('successModal').style.display = 'none';
+  });
+
+  function openVoteModal(speakerName) {
+    document.getElementById('voteSpeakerName').innerText = speakerName;
+    document.getElementById('voteModal').style.display = 'flex';
+  }
+
+  function closeVoteModal() {
+    document.getElementById('voteModal').style.display = 'none';
+    document.getElementById('voteSpeakerName').innerText = '';
+    document.getElementById('voterName').value = '';
+    document.getElementById('voterEmail').value = '';
+    document.getElementById('voterPhone').value = '';
+  }
+
+  function closeSuccessModal() {
+    document.getElementById('successModal').style.display = 'none';
+  }
+
+  function submitVote() {
+    const name = document.getElementById('voterName').value.trim();
+    const email = document.getElementById('voterEmail').value.trim();
+    const phone = document.getElementById('voterPhone').value.trim();
+    const speaker = document.getElementById('voteSpeakerName').innerText.trim();
+
+    if (!name || !email || !phone) {
+      alert("Please fill in all fields");
+      return;
+    }
+
+    fetch('/api/vote', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, email, phone, speaker })
+    })
+      .then(res => res.json())
+      .then(data => {
+        closeVoteModal();
+        document.getElementById('successModal').style.display = 'flex';
+      })
+      .catch(err => {
+        console.error('Failed to submit vote:', err);
+        alert('Something went wrong while submitting your vote.');
+      });
+  }
+</script>
+
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="js/plugins/jquery.countdown.js"></script>
     <script src="js/vendor/modernizr-3.5.0.min.js"></script>

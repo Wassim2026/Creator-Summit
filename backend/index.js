@@ -5,6 +5,11 @@ const bodyParser = require('body-parser');
 const angelRoutes = require('./routes/angelRoutes');
 const angelsRoute = require('./routes/admin/angels');
 const adminLoginRoute = require('./routes/adminLogin');
+const voteRoutes = require('./routes/votes'); // adjust path if needed
+const voteAdminRoutes = require('./routes/votes'); // ✅
+
+
+
 
 
 
@@ -23,6 +28,11 @@ app.use(angelRoutes);
 app.use('/api/admin/angels', angelsRoute);
 app.use('/api/admin', adminLoginRoute);
 app.use('/api/admin/angels', angelsRoute);
+app.use('/api', voteRoutes);
+app.use('/api/votes', voteAdminRoutes); // ✅
+// server.js
+
+
 // Server
 app.listen(PORT, () => {
   console.log(`🚀 Server running at http://localhost:${PORT}`);

@@ -50,49 +50,117 @@
 
 <!-- JS RENDERING SPEAKERS -->
 <script>
+  function openSpeakerModal(name, role, description, image) {
+    const modalContent = `
+      <div class="row align-items-center">
+        <div class="col-md-4 text-center">
+          <img src="${image}" alt="${name}" class="img-fluid rounded-circle mb-3" style="width: 150px; height: 150px; object-fit: cover;" />
+        </div>
+        <div class="col-md-8">
+          <h4 style="color:#002b7f;">${name}</h4>
+          <p style="color: #777;"><strong>${role}</strong></p>
+          <p>${description || 'No description available.'}</p>
+        </div>
+      </div>
+    `;
+    document.getElementById('modalContent').innerHTML = modalContent;
+    var myModal = new bootstrap.Modal(document.getElementById('speakerModal'));
+    myModal.show();
+  }
+</script>
+
+<!-- JS RENDERING SPEAKERS -->
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
     fetch('/api/speakers')
-      .then((res) => res.json())
-      .then((data) => {
+      .then(res => res.json())
+      .then(data => {
         const container = document.getElementById('speakers-container');
         data.forEach((speaker) => {
-         const imageUrl = speaker.youtube_image && speaker.youtube_image.startsWith('/uploads/')
-  ? speaker.youtube_image
-  : speaker.youtube_image
-    ? `/uploads/${speaker.youtube_image}`
-    : 'img/speaker_1.png';
-
+          const imageUrl = speaker.youtube_image && speaker.youtube_image.startsWith('/uploads/')
+            ? speaker.youtube_image
+            : speaker.youtube_image
+              ? `/uploads/${speaker.youtube_image}`
+              : 'img/speaker_1.png';
 
           const html = `
             <div class="col-lg-3 col-md-6 mb-4">
               <div class="card text-center p-4 border-0 shadow-sm">
                 <div class="mb-3">
                   <img 
-  src="${imageUrl}" 
-  alt="${speaker.name}" 
-  onclick="openSpeakerModal('${speaker.name}', '${speaker.role || ''}', '${speaker.description || ''}', '${imageUrl}')"
-  style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; background: #eee; cursor: pointer;"
-/>
-
+                    src="${imageUrl}" 
+                    alt="${speaker.name}" 
+                    onclick="openSpeakerModal('${speaker.name}', '${speaker.role || ''}', '${speaker.description || ''}', '${imageUrl}')"
+                    style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; background: #eee; cursor: pointer;"
+                  />
                 </div>
                 <h5 style="font-weight: 700; color: #002b7f;">${speaker.name}</h5>
                 <p style="color: #777; margin-top: 5px;">${speaker.niche || 'Speaker'}</p>
-               <div class="d-flex justify-content-center gap-2 mt-3">
-  ${speaker.instagram ? `<a href="${speaker.instagram}" target="_blank" class="social-icon mx-1"><i class="fab fa-instagram"></i></a>` : ''}
-  ${speaker.youtube ? `<a href="${speaker.youtube}" target="_blank" class="social-icon mx-1"><i class="fab fa-youtube"></i></a>` : ''}
-  ${speaker.tiktok ? `<a href="${speaker.tiktok}" target="_blank" class="social-icon mx-1"><i class="fab fa-tiktok"></i></a>` : ''}
-
-</div>
-
+                <button class="btn btn-sm btn-primary mt-2" onclick="openVoteModal('${speaker.name}')">Vote</button>
+                <div class="d-flex justify-content-center mt-3">
+                  ${speaker.instagram ? `<a href="${speaker.instagram}" target="_blank" class="mx-1"><i class="fab fa-instagram"></i></a>` : ''}
+                  ${speaker.youtube ? `<a href="${speaker.youtube}" target="_blank" class="mx-1"><i class="fab fa-youtube"></i></a>` : ''}
+                  ${speaker.tiktok ? `<a href="${speaker.tiktok}" target="_blank" class="mx-1"><i class="fab fa-tiktok"></i></a>` : ''}
+                </div>
               </div>
             </div>
           `;
           container.innerHTML += html;
         });
-      })
-      .catch((err) => {
-        console.error('Failed to load speakers:', err);
       });
-  </script>
+
+    // Ensure modals are hidden on load
+    document.getElementById('voteModal').style.display = 'none';
+    document.getElementById('successModal').style.display = 'none';
+  });
+
+  function openVoteModal(speakerName) {
+    document.getElementById('voteSpeakerName').innerText = speakerName;
+    document.getElementById('voteModal').style.display = 'flex';
+  }
+
+  function closeVoteModal() {
+    document.getElementById('voteModal').style.display = 'none';
+    document.getElementById('voteSpeakerName').innerText = '';
+    document.getElementById('voterName').value = '';
+    document.getElementById('voterEmail').value = '';
+    document.getElementById('voterPhone').value = '';
+  }
+
+  function closeSuccessModal() {
+    document.getElementById('successModal').style.display = 'none';
+  }
+
+  function submitVote() {
+    const name = document.getElementById('voterName').value.trim();
+    const email = document.getElementById('voterEmail').value.trim();
+    const phone = document.getElementById('voterPhone').value.trim();
+    const speaker = document.getElementById('voteSpeakerName').innerText.trim();
+
+    if (!name || !email || !phone) {
+      alert("Please fill in all fields");
+      return;
+    }
+
+    fetch('/api/vote', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, email, phone, speaker })
+    })
+      .then(res => res.json())
+      .then(data => {
+        // Clear form and hide vote modal
+        closeVoteModal();
+
+        // Show success modal
+        document.getElementById('successModal').style.display = 'flex';
+      })
+      .catch(err => {
+        console.error('Failed to submit vote:', err);
+        alert('Something went wrong while submitting your vote.');
+      });
+  }
+</script>
   <body>
     <!-- header -->
     <header
@@ -196,8 +264,7 @@
 
   </div>
 </section>
-
-      <!-- team-area -->
+<!-- team-area -->
       <section id="team" class="team-area p-relative pt-120 pb-120 fix">
         <div
           class="section-t team-t paroller"
@@ -234,20 +301,22 @@
               </div>
             </div>
           </div>
-          <div class="row" id="speakers-container"></div>
+            <div class="row" id="speakers-container"></div>
           <div class="row">
             <div
               class="col-lg-3 col-md-6 wow fadeInDown animated"
               data-animation="fadeInUp animated"
               data-delay=".2s"
             >
+
+
+
                 <div class="team-thumb">
                   <img src="img/speaker_1.png" alt="img" />
                 </div>
                 <div class="team-info">
-          </div>
-        </div>
-      </section>
+
+</div>
       <!-- team-area-end -->
 
       <!-- slider-area -->
@@ -519,20 +588,31 @@
     <script src="js/isotope.pkgd.min.js"></script>
     <script src="js/imagesloaded.pkgd.min.js"></script>
     <script src="js/main.js"></script>
-  </body>
+    <!-- Speakers Section -->
+<div class="container mt-5">
+  <div class="row" id="speakers-container"></div>
+</div>
 
-   <!-- Modal -->
-<div class="modal fade" id="speakerModal" tabindex="-1" aria-labelledby="speakerModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered modal-lg">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="speakerModalLabel">Speaker Detail</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body" id="modalContent">
-        <!-- Content inserted dynamically -->
-      </div>
+<!-- Vote Modal -->
+<div id="voteModal" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:9999; display:flex; align-items:center; justify-content:center;">
+  <div class="card p-4" style="width: 100%; max-width: 400px;">
+    <h5 class="mb-3 text-center">Vote for <span id="voteSpeakerName"></span></h5>
+    <input type="text" class="form-control mb-2" id="voterName" placeholder="Your Name" />
+    <input type="email" class="form-control mb-2" id="voterEmail" placeholder="Your Email" />
+    <input type="tel" class="form-control mb-3" id="voterPhone" placeholder="Your Phone" />
+    <div class="d-flex justify-content-between">
+      <button class="btn btn-secondary" onclick="closeVoteModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="submitVote()">Vote Now</button>
     </div>
   </div>
 </div>
+
+<!-- Success Modal -->
+<div id="successModal" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:9999; display:flex; align-items:center; justify-content:center;">
+  <div class="card text-center p-4" style="max-width: 300px;">
+    <h5 class="mb-3 text-success">Vote Submitted! Thanks For Vote</h5>
+    <button class="btn btn-sm btn-success" onclick="closeSuccessModal()">OK</button>
+  </div>
+</div>
+
 </html>
