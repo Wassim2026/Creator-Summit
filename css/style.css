@@ -90,6 +90,13 @@ body {
   padding-top: 100px;
 }
 
+nav ul{
+	margin-left: -50px !important;
+}
+
+.btn {
+	padding: 20px !important;
+}
 /* Default menu link color */
 .menu-link {
   color: #002691 !important;
