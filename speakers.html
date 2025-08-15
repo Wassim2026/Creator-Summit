@@ -6,7 +6,9 @@
     <title>XpertOne Creator Summit</title>
     <meta name="description" content="" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="shortcut icon" type="image/x-icon" href="img/logo/logo.png" />
+    <link rel="shortcut icon" type="image/x-icon" href="img/favicon.ico" />
+     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
     <!-- Place favicon.ico in the root directory -->
 
     <!-- CSS here -->
@@ -28,27 +30,7 @@
     <link rel="stylesheet" href="css/style.css" />
     <link rel="stylesheet" href="css/responsive.css" />
   </head>
-  <script>
-  function openSpeakerModal(name, role, description, image) {
-    const modalContent = `
-      <div class="row align-items-center">
-        <div class="col-md-4 text-center">
-          <img src="${image}" alt="${name}" class="img-fluid rounded-circle mb-3" style="width: 150px; height: 150px; object-fit: cover;" />
-        </div>
-        <div class="col-md-8">
-          <h4 style="color:#002b7f;">${name}</h4>
-          <p style="color: #777;"><strong>${role}</strong></p>
-          <p>${description || 'No description available.'}</p>
-        </div>
-      </div>
-    `;
-    document.getElementById('modalContent').innerHTML = modalContent;
-    var myModal = new bootstrap.Modal(document.getElementById('speakerModal'));
-    myModal.show();
-  }
-</script>
-
-<!-- JS RENDERING SPEAKERS -->
+  
 <script>
   function openSpeakerModal(name, role, description, image) {
     const modalContent = `
@@ -72,50 +54,81 @@
 <!-- JS RENDERING SPEAKERS -->
 <script>
   document.addEventListener('DOMContentLoaded', () => {
-    fetch('/api/speakers')
-      .then(res => res.json())
-      .then(data => {
-        const container = document.getElementById('speakers-container');
-        data.forEach((speaker) => {
-          const imageUrl = speaker.youtube_image && speaker.youtube_image.startsWith('/uploads/')
-            ? speaker.youtube_image
-            : speaker.youtube_image
-              ? `/uploads/${speaker.youtube_image}`
-              : 'img/speaker_1.png';
+    Promise.all([
+      fetch('/api/speakers').then(res => res.json()),
+      fetch('/api/vote-results').then(res => res.json())
+    ])
+    .then(([speakers, voteResults]) => {
+      const container = document.getElementById('speakers-container');
 
-          const html = `
-            <div class="col-lg-3 col-md-6 mb-4">
-              <div class="card text-center p-4 border-0 shadow-sm">
-                <div class="mb-3">
-                  <img 
-                    src="${imageUrl}" 
-                    alt="${speaker.name}" 
-                    onclick="openSpeakerModal('${speaker.name}', '${speaker.role || ''}', '${speaker.description || ''}', '${imageUrl}')"
-                    style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; background: #eee; cursor: pointer;"
-                  />
-                </div>
-                <h5 style="font-weight: 700; color: #002b7f;">${speaker.name}</h5>
-                <p style="color: #777; margin-top: 5px;">${speaker.niche || 'Speaker'}</p>
-                <button class="btn btn-sm btn-primary mt-2" onclick="openVoteModal('${speaker.name}')">Vote</button>
-                <div class="d-flex justify-content-center mt-3">
-                  ${speaker.instagram ? `<a href="${speaker.instagram}" target="_blank" class="mx-1"><i class="fab fa-instagram"></i></a>` : ''}
-                  ${speaker.youtube ? `<a href="${speaker.youtube}" target="_blank" class="mx-1"><i class="fab fa-youtube"></i></a>` : ''}
-                  ${speaker.tiktok ? `<a href="${speaker.tiktok}" target="_blank" class="mx-1"><i class="fab fa-tiktok"></i></a>` : ''}
-                </div>
-              </div>
-            </div>
-          `;
-          container.innerHTML += html;
-        });
+      // Convert voteResults to object for quick lookup
+      const voteMap = {};
+      voteResults.forEach(v => {
+        voteMap[v.speaker] = v.total_votes;
       });
 
-    // Ensure modals are hidden on load
+      speakers.forEach((speaker) => {
+        const imageUrl = speaker.youtube_image && speaker.youtube_image.startsWith('/uploads/')
+          ? speaker.youtube_image
+          : speaker.youtube_image
+            ? `/uploads/${speaker.youtube_image}`
+            : 'img/speaker_1.png';
+
+        const votes = voteMap[speaker.name] || 0;
+
+        const html = `
+  <div class="col-lg-3 col-md-6 col-sm-12 wow fadeInDown animated">
+    <div class="single-team text-center pt-50 pb-50 mb-30" style="border-radius: 30px; background: #fff;">
+      <div class="team-thumb" style="height: 350px; margin-top: -40px; display: flex; justify-content: center; align-items: center; background: transparent;  border-radius: 20px 20px 0 0;">
+        <img 
+          src="${imageUrl}" 
+          alt="${speaker.name}"  class="imh"
+          onclick="openSpeakerModal('${speaker.name}', '${speaker.role || ''}', '${speaker.description || ''}', '${imageUrl}')" 
+          style="height: 90%; width: 90%; border-radius: 50%; border: 4px solid #e91e63; margin-top: -50px;"
+        />
+      </div>
+      <div class="team-info" style="margin-top: -60px">
+        <h5>${speaker.name}</h5>
+        <div class="team-social pt-15 pb-15 mb-15">
+          ${speaker.instagram ? `<a href="${speaker.instagram}" target="_blank"><i class="fab fa-instagram"></i></a>` : ''}
+          ${speaker.youtube ? `<a href="${speaker.youtube}" target="_blank"><i class="fab fa-youtube"></i></a>` : ''}
+          ${speaker.tiktok ? `<a href="${speaker.tiktok}" target="_blank"><i class="fab fa-tiktok"></i></a>` : ''}
+          ${speaker.tiktok ? `<a href="${speaker.facebook}" target="_blank"><i class="fab fa-facebook"></i></a>` : ''}
+          ${speaker.tiktok ? `<a href="${speaker.linkedin}" target="_blank"><i class="fab fa-linkedin"></i></a>` : ''}
+        </div>
+        <span>${speaker.niche || speaker.title || 'Speaker'}</span>
+        <div class="mt-3">
+          <a class="btn btn-sm btn-primary mt-2" href="speaker-details.html?speaker=${encodeURIComponent(speaker.name)}" style="margin-bottom: -25px; color: white">
+            Vote Now
+          </a>
+        </div>
+      </div>
+      <p style="margin-top: 35px; margin-bottom: -28px; font-weight: bold; color: green;">Votes: ${votes}</p>
+    </div>
+  </div>
+`;
+
+        container.innerHTML += html;
+      });
+
+      // ✅ Auto-open vote modal if "vote" query param exists
+      const urlParams = new URLSearchParams(window.location.search);
+      const voteName = urlParams.get('vote');
+      if (voteName) {
+        setTimeout(() => {
+          openVoteModal(voteName);
+        }, 300);
+      }
+    });
+
+    // Hide modals initially
     document.getElementById('voteModal').style.display = 'none';
     document.getElementById('successModal').style.display = 'none';
   });
 
   function openVoteModal(speakerName) {
     document.getElementById('voteSpeakerName').innerText = speakerName;
+    document.getElementById('voterSpeaker').value = speakerName;
     document.getElementById('voteModal').style.display = 'flex';
   }
 
@@ -125,43 +138,62 @@
     document.getElementById('voterName').value = '';
     document.getElementById('voterEmail').value = '';
     document.getElementById('voterPhone').value = '';
+    document.getElementById('voterSpeaker').value = '';
   }
 
   function closeSuccessModal() {
     document.getElementById('successModal').style.display = 'none';
   }
 
-  function submitVote() {
-    const name = document.getElementById('voterName').value.trim();
-    const email = document.getElementById('voterEmail').value.trim();
-    const phone = document.getElementById('voterPhone').value.trim();
-    const speaker = document.getElementById('voteSpeakerName').innerText.trim();
+  function submitVote(event) {
+    event.preventDefault();
 
-    if (!name || !email || !phone) {
-      alert("Please fill in all fields");
-      return;
-    }
+    const name = document.getElementById("voterName").value.trim();
+    const email = document.getElementById("voterEmail").value.trim();
+    const phone = document.getElementById("voterPhone").value.trim();
+    const speaker = document.getElementById("voterSpeaker").value.trim();
 
     fetch('/api/vote', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name, email, phone, speaker })
     })
-      .then(res => res.json())
-      .then(data => {
-        // Clear form and hide vote modal
-        closeVoteModal();
+    .then(res => res.json())
+    .then(data => {
+      const modal = document.getElementById("successModal");
+      const message = document.getElementById("successMessage");
 
-        // Show success modal
-        document.getElementById('successModal').style.display = 'flex';
-      })
-      .catch(err => {
-        console.error('Failed to submit vote:', err);
-        alert('Something went wrong while submitting your vote.');
-      });
+      if (data.message === "Vote submitted successfully!") {
+        message.innerText = "✅ Vote Submitted! Thanks For Voting";
+        message.classList.add("text-success");
+        message.classList.remove("text-danger");
+      } else {
+        message.innerText = "⚠️ " + data.message;
+        message.classList.add("text-danger");
+        message.classList.remove("text-success");
+      }
+
+      closeVoteModal();
+      modal.style.display = "flex";
+    })
+    .catch(err => {
+      console.error("Error:", err);
+    });
   }
 </script>
+
+
+
+
   <body>
+    <style>
+      .imh{
+        transition: 1s !important;
+      }
+      .imh:hover{
+        transform: rotateY(360deg) !important;
+      }
+    </style>
     <!-- header -->
     <header
       id="home"
@@ -175,11 +207,7 @@
               <div class="col-xl-3 col-lg-3">
                 <div class="logo">
                   <a href="index.html"
-                    ><img
-                      src="img/logo/logo.png"
-                      alt="logo"
-                      style="width: 200px; height: 70px"
-                  /></a>
+                    ></a>
                 </div>
               </div>
               <div class="col-xl-6 col-lg-9">
@@ -233,38 +261,42 @@
     <!-- main-area -->
     <main>
       <!-- breadcrumb-area -->
-       <section>
-  <div class="breadcrumb-section" style="position: relative; background-image: url('img/angels.webp'); background-size: cover; background-position: center; background-repeat: no-repeat; height: 60vh; display: flex; align-items: center; justify-content: center;">
-    
-    <!-- Overlay -->
-    <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.7);"></div>
+      <section>
+      <div class="breadcrumb-section"
+        style="position: relative; background-image: url('img/angels.webp'); background-size: cover; background-position: center; background-repeat: no-repeat; height: 60vh; display: flex; align-items: center; justify-content: center;">
 
-    <!-- Content -->
-    <div class="container" style="position: relative; z-index: 1;">
-      <div class="row justify-content-center">
-        <div class="col-xl-6 col-lg-8 text-center">
-          <div class="breadcrumb-wrap">
-            <div class="breadcrumb-title mb-30">
-              <h2 style="color: white;">Our Angels</h2>
+        <!-- Overlay -->
+        <div
+          style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.7);">
+        </div>
+
+        <!-- Content -->
+        <div class="container" style="position: relative; z-index: 1;">
+          <div class="row justify-content-center">
+            <div class="col-xl-6 col-lg-8 text-center">
+              <div class="breadcrumb-wrap">
+                <div class="breadcrumb-title mb-30">
+                  <h2 style="color: white;">Our Angels</h2>
+                </div>
+                <nav aria-label="breadcrumb">
+                  <ol class="breadcrumb justify-content-center" style="background: transparent;">
+                    <li class="breadcrumb-item">
+                      <a href="index.html" style="color: #fff;">Home</a>
+                    </li>
+                    <li class="breadcrumb-item active" aria-current="page" style="color: #ddd;">
+                      Our Angels
+                    </li>
+                  </ol>
+                </nav>
+              </div>
             </div>
-            <nav aria-label="breadcrumb">
-              <ol class="breadcrumb justify-content-center" style="background: transparent;">
-                <li class="breadcrumb-item">
-                  <a href="index.html" style="color: #fff;">Home</a>
-                </li>
-                <li class="breadcrumb-item active" aria-current="page" style="color: #ddd;">
-                  Our Angels
-                </li>
-              </ol>
-            </nav>
           </div>
         </div>
-      </div>
-    </div>
 
-  </div>
-</section>
-<!-- team-area -->
+      </div>
+    </section>
+    
+      <!-- team-area -->
       <section id="team" class="team-area p-relative pt-120 pb-120 fix">
         <div
           class="section-t team-t paroller"
@@ -595,24 +627,30 @@
 
 <!-- Vote Modal -->
 <div id="voteModal" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:9999; display:flex; align-items:center; justify-content:center;">
-  <div class="card p-4" style="width: 100%; max-width: 400px;">
+  <form id="voteForm" class="card p-4" style="width: 100%; max-width: 400px;" onsubmit="submitVote(event)">
     <h5 class="mb-3 text-center">Vote for <span id="voteSpeakerName"></span></h5>
-    <input type="text" class="form-control mb-2" id="voterName" placeholder="Your Name" />
-    <input type="email" class="form-control mb-2" id="voterEmail" placeholder="Your Email" />
-    <input type="tel" class="form-control mb-3" id="voterPhone" placeholder="Your Phone" />
+
+    <input type="text" name="name" class="form-control mb-2" id="voterName" placeholder="Your Name" required />
+    <input type="email" name="email" class="form-control mb-2" id="voterEmail" placeholder="Your Email" required />
+    <input type="tel" name="phone" class="form-control mb-3" id="voterPhone" placeholder="Your Phone" required />
+
+    <!-- Hidden speaker input -->
+    <input type="hidden" name="speaker" id="voterSpeaker" />
+
     <div class="d-flex justify-content-between">
-      <button class="btn btn-secondary" onclick="closeVoteModal()">Cancel</button>
-      <button class="btn btn-primary" onclick="submitVote()">Vote Now</button>
+      <button type="button" class="btn btn-secondary" onclick="closeVoteModal()">Cancel</button>
+      <button type="submit" class="btn btn-primary">Vote Now</button>
     </div>
-  </div>
+  </form>
 </div>
 
 <!-- Success Modal -->
 <div id="successModal" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:9999; display:flex; align-items:center; justify-content:center;">
   <div class="card text-center p-4" style="max-width: 300px;">
-    <h5 class="mb-3 text-success">Vote Submitted! Thanks For Vote</h5>
+    <h5 id="successMessage" class="mb-3 text-success">Vote Submitted! Thanks For Voting</h5>
     <button class="btn btn-sm btn-success" onclick="closeSuccessModal()">OK</button>
   </div>
 </div>
+
 
 </html>

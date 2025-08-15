@@ -10,16 +10,32 @@ router.post('/vote', (req, res) => {
     return res.status(400).json({ message: 'All fields are required' });
   }
 
-  const query = 'INSERT INTO votes (name, email, phone, speaker) VALUES (?, ?, ?, ?)';
-  db.query(query, [name, email, phone, speaker], (err, result) => {
+  // First check if the email already exists
+  const checkQuery = 'SELECT * FROM votes WHERE email = ?';
+  db.query(checkQuery, [email], (err, results) => {
     if (err) {
-      console.error('Error inserting vote:', err);
+      console.error('Error checking email:', err);
       return res.status(500).json({ message: 'Internal server error' });
     }
 
-    res.json({ message: 'Vote submitted successfully!' });
+    if (results.length > 0) {
+      // Email already voted
+      return res.status(400).json({ message: 'You have already voted with this email.' });
+    }
+
+    // Insert vote
+    const insertQuery = 'INSERT INTO votes (name, email, phone, speaker) VALUES (?, ?, ?, ?)';
+    db.query(insertQuery, [name, email, phone, speaker], (err, result) => {
+      if (err) {
+        console.error('Error inserting vote:', err);
+        return res.status(500).json({ message: 'Internal server error' });
+      }
+
+      res.json({ message: 'Vote submitted successfully!' });
+    });
   });
 });
+
 // GET /api/admin/votes
 router.get('/', (req, res) => {
   db.query('SELECT * FROM votes ORDER BY id DESC', (err, results) => {
@@ -30,6 +46,25 @@ router.get('/', (req, res) => {
     res.json(results);
   });
 });
+// GET /api/speakers/:name (single speaker by name)
+router.get('/speakers/:name', (req, res) => {
+  const speakerName = req.params.name;
+  const sql = "SELECT * FROM angels WHERE name = ?";
+
+  db.query(sql, [speakerName], (err, results) => {
+    if (err) {
+      console.error("Error fetching speaker:", err);
+      return res.status(500).json({ message: "Error fetching speaker" });
+    }
+
+    if (results.length === 0) {
+      return res.status(404).json({ message: "Speaker not found" });
+    }
+
+    res.json(results[0]);
+  });
+});
+
 
 // GET vote results by speaker
 router.get('/vote-results', (req, res) => {
