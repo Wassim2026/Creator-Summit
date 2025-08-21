@@ -6421,3 +6421,39 @@ pre cite {
   align-items: center;
   justify-content: center;
 }
+
+/* Make whole wrapper clickable */
+.c-icon {
+  display: flex;
+  align-items: center;
+  border: 1px solid #ccc;
+  /* padding: 10px; */
+  border-radius: 6px;
+  cursor: text; /* show typing cursor */
+  transition: all 0.3s ease;
+}
+
+.c-icon i {
+  margin-right: 10px;
+  color: #777;
+}
+
+/* Input styles */
+.c-icon input,
+.c-icon textarea {
+  border: none;
+  outline: none;
+  flex: 1;
+  font-size: 14px;
+  background: transparent;
+}
+
+/* On focus effect */
+.c-icon:focus-within {
+  border-color: #ff007a;  /* pink border */
+  box-shadow: 0 0 5px rgba(255, 0, 122, 0.3);
+}
+
+textarea {
+  resize: vertical;
+}
